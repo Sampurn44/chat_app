@@ -46,17 +46,16 @@ class AuthscreenState extends State<Authscreen> {
         // loging in user
         final usercred = await _firebase.signInWithEmailAndPassword(
             email: enteredemail, password: enteredpass);
-        print(usercred);
       } else {
         final usercred = await _firebase.createUserWithEmailAndPassword(
             email: enteredemail, password: enteredpass);
         //  print(usercred);
-        final _storageref = FirebaseStorage.instance
+        final storageref = FirebaseStorage.instance
             .ref()
             .child('user_image')
             .child('${usercred.user!.uid}.jpg');
-        await _storageref.putFile(_selectedimage!);
-        final imageurl = await _storageref.getDownloadURL();
+        await storageref.putFile(_selectedimage!);
+        final imageurl = await storageref.getDownloadURL();
         await FirebaseFirestore.instance
             .collection('users')
             .doc(usercred.user!.uid)
@@ -72,7 +71,7 @@ class AuthscreenState extends State<Authscreen> {
       // if (error.code == 'invalid-email') {}
       //if (error.code == 'operation-not-allowed') {}
       //if (error.code == 'weak-password') {}
-      // TODO
+
       ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
