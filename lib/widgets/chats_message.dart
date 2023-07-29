@@ -1,9 +1,7 @@
-import 'package:chat_app/screens/chat.dart';
 import 'package:chat_app/widgets/message_buble.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 class ChatMessages extends StatelessWidget {
   const ChatMessages({super.key});
