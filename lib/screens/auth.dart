@@ -1,11 +1,9 @@
 import 'dart:io';
-
 import 'package:chat_app/widgets/user_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 
 final _firebase = FirebaseAuth.instance;
 
@@ -36,20 +34,17 @@ class AuthscreenState extends State<Authscreen> {
       return;
     }
     _form.currentState!.save();
-    //print(enteredemail);
-    //  print(enteredpass);
     try {
       setState(() {
         _isauth = true;
       });
       if (_islogin) {
-        // loging in user
         final usercred = await _firebase.signInWithEmailAndPassword(
             email: enteredemail, password: enteredpass);
       } else {
         final usercred = await _firebase.createUserWithEmailAndPassword(
             email: enteredemail, password: enteredpass);
-        //  print(usercred);
+
         final storageref = FirebaseStorage.instance
             .ref()
             .child('user_image')
@@ -68,9 +63,6 @@ class AuthscreenState extends State<Authscreen> {
       }
     } on FirebaseAuthException catch (error) {
       if (error.code == 'email-already-in-use') {}
-      // if (error.code == 'invalid-email') {}
-      //if (error.code == 'operation-not-allowed') {}
-      //if (error.code == 'weak-password') {}
 
       ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(
