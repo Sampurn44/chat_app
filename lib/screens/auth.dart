@@ -1,9 +1,11 @@
 import 'dart:io';
 
 import 'package:chat_app/widgets/user_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 final _firebase = FirebaseAuth.instance;
 
@@ -23,6 +25,7 @@ class AuthscreenState extends State<Authscreen> {
   var enteredpass = '';
   File? _selectedimage;
   var _isauth = false;
+  var _enteredusername = '';
   void _submit() async {
     final isvalid = _form.currentState!.validate();
 
@@ -54,7 +57,15 @@ class AuthscreenState extends State<Authscreen> {
             .child('${usercred.user!.uid}.jpg');
         await _storageref.putFile(_selectedimage!);
         final imageurl = await _storageref.getDownloadURL();
-        print(imageurl);
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(usercred.user!.uid)
+            .set({
+          'username': _enteredusername,
+          'email': enteredemail,
+          'password': enteredpass,
+          'imageurl': imageurl,
+        });
       }
     } on FirebaseAuthException catch (error) {
       if (error.code == 'email-already-in-use') {}
@@ -121,6 +132,23 @@ class AuthscreenState extends State<Authscreen> {
                               enteredemail = value!;
                             },
                           ),
+                          if (!_islogin)
+                            TextFormField(
+                              decoration:
+                                  const InputDecoration(labelText: 'Username'),
+                              enableSuggestions: false,
+                              validator: (value) {
+                                if (value == null ||
+                                    value.trim().length < 4 ||
+                                    value.isEmpty) {
+                                  return 'Please a valid username (at least 4 characters)';
+                                }
+                                return null;
+                              },
+                              onSaved: (value) {
+                                _enteredusername = value!;
+                              },
+                            ),
                           TextFormField(
                             decoration:
                                 const InputDecoration(labelText: 'Password'),
